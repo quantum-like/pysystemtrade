@@ -170,3 +170,12 @@ These processes run during trading hours, concurrently, looping constantly at va
 This process executes once only
 
 - `run_daily_fx_and_contract_updates` (updates FX prices and contract expiration status)
+
+## Cursor Cloud specific instructions
+
+- `python`, `pytest`, and `black` on `PATH` are the project virtualenv (Python 3.12, editable install of this repo). Refresh dependencies with `python -m pip install --editable '.[dev]' 'scipy>=1.11,<1.15'`.
+- `statsmodels==0.14.0` imports `scipy._lib._util._lazywhere`, which SciPy 1.15 removed, so keep SciPy below 1.15. `pymongo==3.11.3` has no Python 3.12 wheel, so `python3-dev` and `build-essential` must be present or that install fails.
+- Matplotlib is set to the Agg backend for headless sessions. `examples/introduction/asimpletradingrule.py` calls `matplotlib.use("TkAgg")` and needs a display.
+- CSV backtests do not need MongoDB, Interactive Brokers, or `private/private_config.yaml`. A chapter 15 check is `futures_system()` then `system.portfolio.get_notional_position("US10")`. The configured instruments are SOFR, US10, EUROSTX, V2X, MXP, and CORN.
+- `pytest` runs the doctests and unit tests listed in `pyproject.toml`. Format with `black . --exclude '/.venv\/.+/'`.
+- `python dashboard/app.py` serves the production monitor at `http://127.0.0.1:5000/`. The home page does not need MongoDB. The other dashboard routes do.
